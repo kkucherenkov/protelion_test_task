@@ -1,5 +1,6 @@
 import 'dart:isolate';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:protelion_test_task/widget/color_list.dart';
 
@@ -18,9 +19,13 @@ class _MyHomePageState extends State<MyHomePage> {
   ReceivePort? _receivePort;
   Isolate? _isolate;
   SendPort? _mainToIsolateStream;
+  bool _fbEnabled = true;
   final colorListKey = GlobalKey<ColorListState>();
 
   void _onFloatingButtonPressed() {
+    setState(() {
+      _fbEnabled = false;
+    });
     _mainToIsolateStream?.send('start');
   }
 
@@ -47,6 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
         _mainToIsolateStream = data;
       } else if (data is (int, Color)) {
         colorListKey.currentState?.addElement(data);
+      } else if (data == "done") {
+        if (kDebugMode) {
+          print('done');
+        }
+        setState(() {
+          _fbEnabled = true;
+        });
       }
     });
   }
@@ -64,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _onFloatingButtonPressed,
+        onPressed: _fbEnabled ? _onFloatingButtonPressed : null,
         tooltip: 'Start',
         child: const Icon(Icons.add),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:protelion_test_task/background/background.dart';
 import 'package:protelion_test_task/widget/positional_scroll_physics.dart';
 
 const itemHeight = 50.0;
@@ -15,6 +16,8 @@ class ColorList extends StatefulWidget {
 class ColorListState extends State<ColorList> {
   final List<(int id, Color color)> _colors = [];
   final ScrollController _scrollController = ScrollController();
+  final GlobalKey<AnimatedListState> _listKey =
+      GlobalKey(debugLabel: "animatedList");
 
   double _screenWidth = 0;
 
@@ -25,43 +28,51 @@ class ColorListState extends State<ColorList> {
 
   void addElement((int id, Color color) value) {
     int index = findIndexToInsert(_colors, value.$1);
-    setState(() {
-      _colors.insert(index, value);
-    });
-
+    _colors.insert(index, value);
+    final duration = getIntInRange(200, 500);
+    _listKey.currentState
+        ?.insertItem(index, duration: Duration(milliseconds: duration));
     final currentIndex = (_scrollController.offset / itemHeight).ceil();
     if (index <= currentIndex) {
       _scrollController.jumpTo(_scrollController.offset + itemHeight);
     }
   }
 
+  Widget _itemBuilder(BuildContext context, int index, animation) {
+    var item = _colors[index];
+    TextStyle? textStyle = Theme.of(context).textTheme.headlineSmall;
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(-1, 0),
+        end: const Offset(0, 0),
+      ).animate(animation),
+      child: Container(
+        height: itemHeight,
+        width: _screenWidth,
+        color: item.$2,
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '${item.$1}',
+              style: textStyle,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _screenWidth = MediaQuery.of(context).size.width;
 
-    return ListView.builder(
-      controller: _scrollController,
-      physics: const PositionRetainedScrollPhysics(),
-      itemExtent: itemHeight,
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          height: itemHeight,
-          width: _screenWidth,
-          color: _colors[index].$2,
-          child: Padding(
-            padding: const EdgeInsets.all(4),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '${_colors[index].$1}',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ),
-          ),
-        );
-      },
-      itemCount: _colors.length,
-    );
+    return AnimatedList(
+        key: _listKey,
+        controller: _scrollController,
+        physics: const PositionRetainedScrollPhysics(),
+        itemBuilder: _itemBuilder);
   }
 
   int findIndexToInsert(List<(int, Color)> colors, int id) {

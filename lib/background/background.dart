@@ -15,13 +15,17 @@ void colorPairsGenerator(SendPort sendPort) {
   sendPort.send(isolateReceivePort.sendPort);
   isolateReceivePort.listen((message) {
     if (message == "start") {
+      if (kDebugMode) {
+        print('start');
+      }
       final int numberOfPairs = getIntInRange(minItems, maxItems);
-      for (int i = 0; i < numberOfPairs/2; i++) {
+      for (int i = 0; i < numberOfPairs; i++) {
         final delay = getIntInRange(minDelay, maxDelay);
         final pair = generateColorPair(numberOfPairs);
         sendPort.send(pair);
         sleep(Duration(milliseconds: delay));
       }
+      sendPort.send('done');
     }
   });
 }

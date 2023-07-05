@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class PositionRetainedScrollPhysics extends ScrollPhysics {
   final bool shouldRetain;
+
   const PositionRetainedScrollPhysics(
       {ScrollPhysics? parent, this.shouldRetain = true})
       : super(parent: parent);
