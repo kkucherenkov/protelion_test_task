@@ -1,7 +1,7 @@
 import 'dart:isolate';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:protelion_test_task/constants.dart';
 import 'package:protelion_test_task/widget/color_list.dart';
 
 import '../background/background.dart';
@@ -26,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _fbEnabled = false;
     });
-    _mainToIsolateStream?.send('start');
+    _mainToIsolateStream?.send(IsolateCommand.start);
   }
 
   @override
@@ -52,10 +52,9 @@ class _MyHomePageState extends State<MyHomePage> {
         _mainToIsolateStream = data;
       } else if (data is (int, Color)) {
         colorListKey.currentState?.addElement(data);
-      } else if (data == 'done') {
-        if (kDebugMode) {
-          print('done');
-        }
+      } else if (data == IsolateCommand.done) {
+        debugPrint('done');
+
         setState(() {
           _fbEnabled = true;
         });

@@ -1,23 +1,16 @@
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-
-const maxItems = 1000;
-const minItems = 25;
-const maxDelay = 1000;
-const minDelay = 50;
+import 'package:protelion_test_task/constants.dart';
+import 'package:protelion_test_task/utils/utils.dart';
 
 void colorPairsGenerator(SendPort sendPort) {
   ReceivePort isolateReceivePort = ReceivePort();
   sendPort.send(isolateReceivePort.sendPort);
   isolateReceivePort.listen((message) {
-    if (message == 'start') {
-      if (kDebugMode) {
-        print('start');
-      }
+    if (message == IsolateCommand.start) {
+      debugPrint('start');
       final int numberOfPairs = getIntInRange(minItems, maxItems);
       for (int i = 0; i < numberOfPairs; i++) {
         final delay = getIntInRange(minDelay, maxDelay);
@@ -25,22 +18,7 @@ void colorPairsGenerator(SendPort sendPort) {
         sendPort.send(pair);
         sleep(Duration(milliseconds: delay));
       }
-      sendPort.send('done');
+      sendPort.send(IsolateCommand.done);
     }
   });
-}
-
-int getIntInRange(int min, int max) {
-  return Random().nextInt(max - min) + min;
-}
-
-(int id, Color color) generateColorPair(int maxId) {
-  int id = Random().nextInt(maxId);
-  int r = Random().nextInt(255);
-  int g = Random().nextInt(255);
-  int b = Random().nextInt(255);
-  int a = Random().nextInt(200);
-  Color color = Color.fromARGB(a, r, g, b);
-
-  return (id, color);
 }
