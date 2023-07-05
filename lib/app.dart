@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:protelion_test_task/home/home_page.dart';
+
+import 'home/bloc/isolate_bloc.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,7 +15,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Protelion Demo Page'),
+      home: BlocProvider(
+        create: (_) => IsolateBloc(),
+        child: const MyHomePage(title: 'Protelion Demo Page'),
+      ),
     );
   }
 }

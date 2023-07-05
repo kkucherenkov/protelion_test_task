@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:protelion_test_task/background/background.dart';
+import 'package:protelion_test_task/utils/utils.dart';
 import 'package:protelion_test_task/widget/positional_scroll_physics.dart';
 
 const itemHeight = 50.0;
@@ -19,8 +19,6 @@ class ColorListState extends State<ColorList> {
   final GlobalKey<AnimatedListState> _listKey =
       GlobalKey(debugLabel: 'animatedList');
 
-  double _screenWidth = 0;
-
   @override
   void initState() {
     super.initState();
@@ -33,14 +31,15 @@ class ColorListState extends State<ColorList> {
     _listKey.currentState
         ?.insertItem(index, duration: Duration(milliseconds: duration));
     final currentIndex = (_scrollController.offset / itemHeight).ceil();
-    if (index <= currentIndex) {
+    if (index < currentIndex) {
       _scrollController.jumpTo(_scrollController.offset + itemHeight);
     }
   }
 
   Widget _itemBuilder(BuildContext context, int index, animation) {
-    var item = _colors[index];
+    final item = _colors[index];
     TextStyle? textStyle = Theme.of(context).textTheme.headlineSmall;
+    final screenWidth = MediaQuery.of(context).size.width;
     return SlideTransition(
       position: Tween<Offset>(
         begin: const Offset(-1, 0),
@@ -48,7 +47,7 @@ class ColorListState extends State<ColorList> {
       ).animate(animation),
       child: Container(
         height: itemHeight,
-        width: _screenWidth,
+        width: screenWidth,
         color: item.$2,
         child: Padding(
           padding: const EdgeInsets.all(4),
@@ -66,8 +65,6 @@ class ColorListState extends State<ColorList> {
 
   @override
   Widget build(BuildContext context) {
-    _screenWidth = MediaQuery.of(context).size.width;
-
     return AnimatedList(
         key: _listKey,
         controller: _scrollController,
