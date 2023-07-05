@@ -17,7 +17,7 @@ class ColorListState extends State<ColorList> {
   final List<(int id, Color color)> _colors = [];
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<AnimatedListState> _listKey =
-      GlobalKey(debugLabel: "animatedList");
+      GlobalKey(debugLabel: 'animatedList');
 
   double _screenWidth = 0;
 

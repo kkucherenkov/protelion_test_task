@@ -14,7 +14,7 @@ void colorPairsGenerator(SendPort sendPort) {
   ReceivePort isolateReceivePort = ReceivePort();
   sendPort.send(isolateReceivePort.sendPort);
   isolateReceivePort.listen((message) {
-    if (message == "start") {
+    if (message == 'start') {
       if (kDebugMode) {
         print('start');
       }

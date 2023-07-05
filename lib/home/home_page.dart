@@ -46,13 +46,13 @@ class _MyHomePageState extends State<MyHomePage> {
   Future spawnIsolate() async {
     _receivePort = ReceivePort();
     _isolate = await Isolate.spawn(colorPairsGenerator, _receivePort!.sendPort,
-        debugName: "colorPairsGenerator");
+        debugName: 'colorPairsGenerator');
     _receivePort?.listen((data) {
       if (data is SendPort) {
         _mainToIsolateStream = data;
       } else if (data is (int, Color)) {
         colorListKey.currentState?.addElement(data);
-      } else if (data == "done") {
+      } else if (data == 'done') {
         if (kDebugMode) {
           print('done');
         }
